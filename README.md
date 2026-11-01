@@ -60,8 +60,15 @@ src/
     modules/            Un dossier par module métier
       bi/               Écrans MAMORA BI + assistant d'export PPTX
       gds/              Écrans GDS et briques partagées (GdsShared)
+  pwa/
+    sw-template.js      Gabarit du Service Worker (rempli au build)
+    registerServiceWorker.ts  Enregistrement en production uniquement
   data/initialData.ts   Jeu de données initial (users, articles, ordres, lots…)
 ```
+
+Le build produit en plus `dist/sw.js` : le Service Worker généré par le plugin
+`mamora-offline-service-worker` de `vite.config.ts`, avec la liste exacte des
+fichiers de l'application (voir « Mode hors ligne »).
 
 ### Conventions
 
@@ -131,6 +138,50 @@ n'est inventé.
 
 Accessible depuis l'en-tête de MAMORA BI et depuis chaque section (tableaux de
 bord, explorateur, KPI, rapports, AI Analyst).
+
+---
+
+## Mode hors ligne (atelier)
+
+L'application est utilisable **sans aucun réseau** après une première ouverture.
+Aucune donnée ne transite par un serveur : la base vit dans le `localStorage` du
+poste, ce qui rend le mode atelier réellement autonome.
+
+**Fonctionnement.** `npm run build` génère `dist/sw.js`, un Service Worker qui
+précache **tout** le contenu du build : `index.html`, feuille de style, socle
+React, les 20 écrans métier chargés à la demande, Recharts, l'icône et le
+manifeste. Le Service Worker n'est enregistré qu'en production
+(`src/pwa/registerServiceWorker.ts`) : en développement, aucun cache ne masque
+les fichiers sources.
+
+**Stratégies.**
+
+| Requête | Réponse |
+|---|---|
+| Navigation (SPA) | Coquille `index.html` depuis le cache. |
+| Fichiers du build | Cache d'abord (noms à empreinte, immuables). |
+| Ressource inconnue | Réseau, puis mise en cache opportuniste. |
+| Hors ligne et inconnue | Échec explicite (sauf document → coquille). |
+
+**Mise à jour.** La version du cache est l'empreinte du contenu du build et du
+code du Service Worker. Une nouvelle version est téléchargée en arrière-plan puis
+activée au **prochain démarrage complet** de l'application : un onglet déjà
+ouvert n'est jamais privé de ses chunks pendant la session.
+
+**Conditions.** Un Service Worker exige un contexte sécurisé : `https://` ou
+`http://localhost`. En déploiement LAN sur une adresse IP en `http://`, l'app
+fonctionne mais le navigateur refuse le Service Worker ; servir le site en HTTPS
+pour activer le mode hors ligne sur les postes de l'atelier.
+
+**Vérifier sur un poste.**
+
+1. `npm run build` puis `npm run preview`.
+2. Ouvrir `http://localhost:4173`, se connecter (le PIN est demandé à la
+   première connexion), puis laisser la page se charger complètement.
+3. Arrêter le serveur (`Ctrl+C`) puis recharger l'onglet : l'application démarre
+   et tous les modules restent accessibles. Le cache se contrôle dans les
+   outils de développement, onglet *Application → Cache Storage*
+   (`mamora-gp-<version>`).
 
 ---
 

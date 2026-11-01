@@ -54,16 +54,21 @@ function offlineServiceWorker(): Plugin {
     closeBundle() {
       const files = listFiles(outDir)
         .map(file => path.relative(outDir, file).split(path.sep).join('/'))
-        .filter(file => !file.endsWith('.map') && file !== 'sw.js');
+        .filter(file => !file.endsWith('.map') && file !== 'sw.js')
+        // Tri explicite : la version de cache doit être identique pour deux
+        // builds du même contenu, quel que soit l'ordre du système de fichiers.
+        .sort();
 
       const urls = files.map(file => encodeURI(`${base}${file}`));
       const template = fs.readFileSync(SW_TEMPLATE, 'utf8');
 
       // La version couvre à la fois les fichiers produits et le code du Service
       // Worker : modifier la stratégie de cache invalide donc aussi l'ancien cache.
+      // Les fins de ligne sont normalisées pour qu'un build LF et un build CRLF
+      // produisent la même version.
       const version = crypto
         .createHash('sha1')
-        .update(template)
+        .update(template.replace(/\r\n/g, '\n'))
         .update('\n')
         .update(urls.join('\n'))
         .digest('hex')

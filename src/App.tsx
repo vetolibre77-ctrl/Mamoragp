@@ -5,36 +5,81 @@
  * Conserverie Industrielle de Thon et de Sardines
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { Suspense, lazy, useState, useEffect } from 'react';
 import { storage } from './services/storage';
-import { Sidebar, ActiveModule, PROCUREMENT_SUBMENUS } from './components/layout/Sidebar';
+import { Sidebar, PROCUREMENT_SUBMENUS } from './components/layout/Sidebar';
+import type { ActiveModule } from './components/layout/Sidebar';
 import { TopBar } from './components/layout/TopBar';
 import { LoginView } from './components/layout/LoginView';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { ModuleLoader } from './components/common/ModuleLoader';
 import { DashboardView } from './components/modules/DashboardView';
-import { ReferentielsView } from './components/modules/ReferentielsView';
-import { MatieresPremieresView } from './components/modules/MatieresPremieresView';
-import { ReceptionView } from './components/modules/ReceptionView';
-import { ProductionView } from './components/modules/ProductionView';
-import { SuiviFabricationView } from './components/modules/SuiviFabricationView';
-import { HaccpQualiteView } from './components/modules/HaccpQualiteView';
-import { SertissageAutoclavesView } from './components/modules/SertissageAutoclavesView';
-import { NonConformitesView } from './components/modules/NonConformitesView';
-import { DossiersLotsView } from './components/modules/DossiersLotsView';
-import { CommercialView } from './components/modules/CommercialView';
-import { TracabiliteView } from './components/modules/TracabiliteView';
-import { MagasinsView } from './components/modules/MagasinsView';
-import { TransfertsView } from './components/modules/TransfertsView';
-import { MaintenanceView } from './components/modules/MaintenanceView';
-import { AuditAdminView } from './components/modules/AuditAdminView';
-import { UserManagerView } from './components/modules/UserManagerView';
-import { ConsommationReelleView } from './components/modules/ConsommationReelleView';
-import {
-  ApprovisionnementView,
-  ProcurementSection,
-} from './components/modules/ApprovisionnementView';
-import { GdsView, GdsSection, GDS_SECTION_LABELS } from './components/modules/GdsView';
-import { MamoraBiView } from './components/modules/MamoraBiView';
+import { GDS_SECTION_LABELS } from './components/modules/gds/gdsSections';
+import type { GdsSection } from './components/modules/gds/gdsSections';
+import type { ProcurementSection } from './components/modules/ApprovisionnementView';
+
+// Les modules métier sont découpés en chunks et téléchargés à la demande :
+// seul le socle (connexion, navigation, tableau de bord) est chargé au démarrage.
+const ReferentielsView = lazy(() =>
+  import('./components/modules/ReferentielsView').then(m => ({ default: m.ReferentielsView })),
+);
+const MatieresPremieresView = lazy(() =>
+  import('./components/modules/MatieresPremieresView').then(m => ({ default: m.MatieresPremieresView })),
+);
+const ReceptionView = lazy(() =>
+  import('./components/modules/ReceptionView').then(m => ({ default: m.ReceptionView })),
+);
+const ProductionView = lazy(() =>
+  import('./components/modules/ProductionView').then(m => ({ default: m.ProductionView })),
+);
+const SuiviFabricationView = lazy(() =>
+  import('./components/modules/SuiviFabricationView').then(m => ({ default: m.SuiviFabricationView })),
+);
+const HaccpQualiteView = lazy(() =>
+  import('./components/modules/HaccpQualiteView').then(m => ({ default: m.HaccpQualiteView })),
+);
+const SertissageAutoclavesView = lazy(() =>
+  import('./components/modules/SertissageAutoclavesView').then(m => ({ default: m.SertissageAutoclavesView })),
+);
+const NonConformitesView = lazy(() =>
+  import('./components/modules/NonConformitesView').then(m => ({ default: m.NonConformitesView })),
+);
+const DossiersLotsView = lazy(() =>
+  import('./components/modules/DossiersLotsView').then(m => ({ default: m.DossiersLotsView })),
+);
+const CommercialView = lazy(() =>
+  import('./components/modules/CommercialView').then(m => ({ default: m.CommercialView })),
+);
+const TracabiliteView = lazy(() =>
+  import('./components/modules/TracabiliteView').then(m => ({ default: m.TracabiliteView })),
+);
+const MagasinsView = lazy(() =>
+  import('./components/modules/MagasinsView').then(m => ({ default: m.MagasinsView })),
+);
+const TransfertsView = lazy(() =>
+  import('./components/modules/TransfertsView').then(m => ({ default: m.TransfertsView })),
+);
+const MaintenanceView = lazy(() =>
+  import('./components/modules/MaintenanceView').then(m => ({ default: m.MaintenanceView })),
+);
+const AuditAdminView = lazy(() =>
+  import('./components/modules/AuditAdminView').then(m => ({ default: m.AuditAdminView })),
+);
+const UserManagerView = lazy(() =>
+  import('./components/modules/UserManagerView').then(m => ({ default: m.UserManagerView })),
+);
+const ConsommationReelleView = lazy(() =>
+  import('./components/modules/ConsommationReelleView').then(m => ({ default: m.ConsommationReelleView })),
+);
+const ApprovisionnementView = lazy(() =>
+  import('./components/modules/ApprovisionnementView').then(m => ({ default: m.ApprovisionnementView })),
+);
+const GdsView = lazy(() =>
+  import('./components/modules/GdsView').then(m => ({ default: m.GdsView })),
+);
+const MamoraBiView = lazy(() =>
+  import('./components/modules/MamoraBiView').then(m => ({ default: m.MamoraBiView })),
+);
 
 export default function App() {
   const [, setTick] = useState(0);
@@ -174,170 +219,172 @@ export default function App() {
         <main className="flex-1 p-6 overflow-y-auto">
           <ErrorBoundary key={`${activeModule}:${procurementSection}:${gdsSection}`} moduleName={getModuleName(activeModule)}>
           <div className="max-w-7xl mx-auto">
-            {activeModule === 'DASHBOARD' && (
-              <DashboardView
-                db={(storage as any).db}
-                onNavigate={mod => setActiveModule(mod)}
-              />
-            )}
+            <Suspense fallback={<ModuleLoader label={`Chargement — ${getModuleName(activeModule)}`} />}>
+              {activeModule === 'DASHBOARD' && (
+                <DashboardView
+                  db={(storage as any).db}
+                  onNavigate={mod => setActiveModule(mod)}
+                />
+              )}
 
-            {activeModule === 'APPROVISIONNEMENT' && (
-              <ApprovisionnementView
-                currentUser={currentUser}
-                section={procurementSection}
-                onNavigate={section => setProcurementSection(section)}
-              />
-            )}
+              {activeModule === 'APPROVISIONNEMENT' && (
+                <ApprovisionnementView
+                  currentUser={currentUser}
+                  section={procurementSection}
+                  onNavigate={section => setProcurementSection(section)}
+                />
+              )}
 
-            {activeModule === 'GDS' && (
-              <GdsView
-                currentUser={currentUser}
-                section={gdsSection}
-                onNavigate={setGdsSection}
-                onOpenProcurementReceptions={() => {
-                  setActiveModule('APPROVISIONNEMENT');
-                  setProcurementSection('RECEPTIONS');
-                }}
-              />
-            )}
+              {activeModule === 'GDS' && (
+                <GdsView
+                  currentUser={currentUser}
+                  section={gdsSection}
+                  onNavigate={setGdsSection}
+                  onOpenProcurementReceptions={() => {
+                    setActiveModule('APPROVISIONNEMENT');
+                    setProcurementSection('RECEPTIONS');
+                  }}
+                />
+              )}
 
-            {activeModule === 'MAMORA_BI' && (
-              <MamoraBiView currentUser={currentUser} />
-            )}
+              {activeModule === 'MAMORA_BI' && (
+                <MamoraBiView currentUser={currentUser} />
+              )}
 
-            {activeModule === 'REFERENTIELS' && (
-              <ReferentielsView items={items} recipes={recipes} />
-            )}
+              {activeModule === 'REFERENTIELS' && (
+                <ReferentielsView items={items} recipes={recipes} />
+              )}
 
-            {activeModule === 'MATIERES_PREMIERES' && (
-              <MatieresPremieresView currentUser={currentUser} />
-            )}
+              {activeModule === 'MATIERES_PREMIERES' && (
+                <MatieresPremieresView currentUser={currentUser} />
+              )}
 
-            {activeModule === 'RECEPTIONS' && (
-              <ReceptionView receptions={receptions} currentUserName={currentUser.name} />
-            )}
+              {activeModule === 'RECEPTIONS' && (
+                <ReceptionView receptions={receptions} currentUserName={currentUser.name} />
+              )}
 
-            {activeModule === 'PLANIFICATION' && (
-              <ProductionView
-                workOrders={workOrders}
-                recipes={recipes}
-                items={items}
-                receptions={receptions}
-                currentUserName={currentUser.name}
-                onNavigateToSteps={handleNavigateToSteps}
-              />
-            )}
+              {activeModule === 'PLANIFICATION' && (
+                <ProductionView
+                  workOrders={workOrders}
+                  recipes={recipes}
+                  items={items}
+                  receptions={receptions}
+                  currentUserName={currentUser.name}
+                  onNavigateToSteps={handleNavigateToSteps}
+                />
+              )}
 
-            {activeModule === 'CONSOMMATION_REELLE' && (
-              <ConsommationReelleView
-                db={(storage as any).db}
-                currentUser={currentUser}
-                initialTab="SAISIE"
-              />
-            )}
+              {activeModule === 'CONSOMMATION_REELLE' && (
+                <ConsommationReelleView
+                  db={(storage as any).db}
+                  currentUser={currentUser}
+                  initialTab="SAISIE"
+                />
+              )}
 
-            {activeModule === 'ANALYSE_ECARTS' && (
-              <ConsommationReelleView
-                db={(storage as any).db}
-                currentUser={currentUser}
-                initialTab="ECARTS"
-              />
-            )}
+              {activeModule === 'ANALYSE_ECARTS' && (
+                <ConsommationReelleView
+                  db={(storage as any).db}
+                  currentUser={currentUser}
+                  initialTab="ECARTS"
+                />
+              )}
 
-            {activeModule === 'RENDEMENT_PERTES' && (
-              <ConsommationReelleView
-                db={(storage as any).db}
-                currentUser={currentUser}
-                initialTab="RENDEMENT"
-              />
-            )}
+              {activeModule === 'RENDEMENT_PERTES' && (
+                <ConsommationReelleView
+                  db={(storage as any).db}
+                  currentUser={currentUser}
+                  initialTab="RENDEMENT"
+                />
+              )}
 
-            {activeModule === 'SUIVI_FABRICATION' && (
-              <SuiviFabricationView
-                workOrders={workOrders}
-                stepLogs={stepLogs}
-                currentUserName={currentUser.name}
-                selectedWorkOrderId={selectedWorkOrderIdForSteps}
-              />
-            )}
+              {activeModule === 'SUIVI_FABRICATION' && (
+                <SuiviFabricationView
+                  workOrders={workOrders}
+                  stepLogs={stepLogs}
+                  currentUserName={currentUser.name}
+                  selectedWorkOrderId={selectedWorkOrderIdForSteps}
+                />
+              )}
 
-            {activeModule === 'HACCP_QUALITE' && (
-              <HaccpQualiteView haccpRecords={haccpRecords} currentUserName={currentUser.name} />
-            )}
+              {activeModule === 'HACCP_QUALITE' && (
+                <HaccpQualiteView haccpRecords={haccpRecords} currentUserName={currentUser.name} />
+              )}
 
-            {activeModule === 'SERTISSAGE_AUTOCLAVES' && (
-              <SertissageAutoclavesView
-                seamingInspections={seamingInspections}
-                autoclaveCycles={autoclaveCycles}
-                workOrders={workOrders}
-                currentUserName={currentUser.name}
-                currentUserRole={currentUser.role}
-              />
-            )}
+              {activeModule === 'SERTISSAGE_AUTOCLAVES' && (
+                <SertissageAutoclavesView
+                  seamingInspections={seamingInspections}
+                  autoclaveCycles={autoclaveCycles}
+                  workOrders={workOrders}
+                  currentUserName={currentUser.name}
+                  currentUserRole={currentUser.role}
+                />
+              )}
 
-            {activeModule === 'NON_CONFORMITES' && (
-              <NonConformitesView
-                nonConformities={nonConformities}
-                currentUserName={currentUser.name}
-              />
-            )}
+              {activeModule === 'NON_CONFORMITES' && (
+                <NonConformitesView
+                  nonConformities={nonConformities}
+                  currentUserName={currentUser.name}
+                />
+              )}
 
-            {activeModule === 'DOSSIERS_LOTS' && (
-              <DossiersLotsView
-                finishedBatches={finishedBatches}
-                currentUserName={currentUser.name}
-                currentUserRole={currentUser.role}
-              />
-            )}
+              {activeModule === 'DOSSIERS_LOTS' && (
+                <DossiersLotsView
+                  finishedBatches={finishedBatches}
+                  currentUserName={currentUser.name}
+                  currentUserRole={currentUser.role}
+                />
+              )}
 
-            {activeModule === 'COMMERCIAL' && (
-              <CommercialView
-                customers={customers}
-                salesOrders={salesOrders}
-                deliveryNotes={deliveryNotes}
-                invoices={invoices}
-                finishedBatches={finishedBatches}
-                items={items}
-                currentUserName={currentUser.name}
-              />
-            )}
+              {activeModule === 'COMMERCIAL' && (
+                <CommercialView
+                  customers={customers}
+                  salesOrders={salesOrders}
+                  deliveryNotes={deliveryNotes}
+                  invoices={invoices}
+                  finishedBatches={finishedBatches}
+                  items={items}
+                  currentUserName={currentUser.name}
+                />
+              )}
 
-            {activeModule === 'TRACABILITE' && (
-              <TracabiliteView
-                receptions={receptions}
-                workOrders={workOrders}
-                finishedBatches={finishedBatches}
-                deliveryNotes={deliveryNotes}
-                customers={customers}
-              />
-            )}
+              {activeModule === 'TRACABILITE' && (
+                <TracabiliteView
+                  receptions={receptions}
+                  workOrders={workOrders}
+                  finishedBatches={finishedBatches}
+                  deliveryNotes={deliveryNotes}
+                  customers={customers}
+                />
+              )}
 
-            {activeModule === 'STOCKS' && (
-              <MagasinsView currentUser={currentUser} />
-            )}
+              {activeModule === 'STOCKS' && (
+                <MagasinsView currentUser={currentUser} />
+              )}
 
-            {activeModule === 'MAGASINS' && (
-              <MagasinsView currentUser={currentUser} />
-            )}
+              {activeModule === 'MAGASINS' && (
+                <MagasinsView currentUser={currentUser} />
+              )}
 
-            {activeModule === 'TRANSFERTS' && (
-              <TransfertsView currentUser={currentUser} />
-            )}
+              {activeModule === 'TRANSFERTS' && (
+                <TransfertsView currentUser={currentUser} />
+              )}
 
-            {activeModule === 'MAINTENANCE' && (
-              <MaintenanceView equipments={equipments} currentUserName={currentUser.name} />
-            )}
+              {activeModule === 'MAINTENANCE' && (
+                <MaintenanceView equipments={equipments} currentUserName={currentUser.name} />
+              )}
 
-            {activeModule === 'AUDIT_ADMIN' && (
-              <AuditAdminView
-                auditLogs={auditLogs}
-                currentUser={currentUser}
-              />
-            )}
+              {activeModule === 'AUDIT_ADMIN' && (
+                <AuditAdminView
+                  auditLogs={auditLogs}
+                  currentUser={currentUser}
+                />
+              )}
 
-            {activeModule === 'USER_MANAGER' && (
-              <UserManagerView currentUser={currentUser} />
-            )}
+              {activeModule === 'USER_MANAGER' && (
+                <UserManagerView currentUser={currentUser} />
+              )}
+            </Suspense>
           </div>
           </ErrorBoundary>
         </main>

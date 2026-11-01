@@ -74,6 +74,10 @@ src/
   actions de sécurité sont tracées avec l'auteur, la date et les valeurs avant/après.
 - **Migrations non destructives** : `migrateDatabase()` fait évoluer le schéma au
   chargement (ex. `User.isActive: boolean` → `User.status`).
+- **Chargement à la demande** : chaque module métier est un chunk séparé
+  (`React.lazy`) chargé à la première ouverture. Le démarrage ne télécharge que
+  le socle (connexion, navigation, tableau de bord) ; `vite.config.ts` regroupe
+  les dépendances lourdes (React, icônes, Recharts) dans des chunks dédiés.
 
 ---
 

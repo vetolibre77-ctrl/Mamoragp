@@ -24,9 +24,15 @@ import {
   Building2,
   Calendar,
 } from 'lucide-react';
+import { Suspense, lazy } from 'react';
 import { AppDatabase } from '../../services/storage';
 import { StatusBadge } from '../common/StatusBadge';
-import { MonthlyRevenueChart } from './MonthlyRevenueChart';
+
+// Recharts et le graphique représentent une part importante du bundle : le
+// graphique est donc chargé après le reste du tableau de bord, en parallèle.
+const MonthlyRevenueChart = lazy(() =>
+  import('./MonthlyRevenueChart').then(m => ({ default: m.MonthlyRevenueChart })),
+);
 
 interface DashboardViewProps {
   db: AppDatabase;
@@ -308,10 +314,19 @@ export const DashboardView: React.FC<DashboardViewProps> = ({ db, onNavigate }) 
         </div>
 
         {/* Graphique en Barres Recharts : Chiffre d'Affaires Mensuel (6 Derniers Mois) */}
-        <MonthlyRevenueChart
-          invoices={db.invoices}
-          onOpenCommercial={() => onNavigate('COMMERCIAL')}
-        />
+        <Suspense
+          fallback={
+            <div
+              aria-hidden="true"
+              className="h-[28rem] rounded-xl bg-slate-100 dark:bg-slate-800/40 animate-pulse"
+            />
+          }
+        >
+          <MonthlyRevenueChart
+            invoices={db.invoices}
+            onOpenCommercial={() => onNavigate('COMMERCIAL')}
+          />
+        </Suspense>
 
         {/* Détails opérationnels : Commandes à expédier & Échéancier de règlement */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-2">

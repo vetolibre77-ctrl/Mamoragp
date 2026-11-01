@@ -21,6 +21,9 @@ connexion, l'écran « Connexion au poste de travail » demande de définir un c
 PIN de 4 à 8 chiffres (empreinte salée, jamais stockée en clair). Un administrateur
 peut réinitialiser un PIN oublié depuis la page de connexion.
 
+Aucune variable d'environnement n'est nécessaire : la base vit dans le navigateur
+du poste et l'application n'effectue aucun appel réseau (voir `.env.example`).
+
 ---
 
 ## Modules

@@ -1,0 +1,19 @@
+{
+  "id": "/",
+  "name": "MAMORA GP - GPAO Conserverie Thon & Sardines",
+  "short_name": "MAMORA GP",
+  "description": "Application industrielle de gestion de production (GPAO), traçabilité amont/aval, contrôles qualité HACCP et stérilisation pour conserverie de thon et de sardines.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#0f172a",
+  "background_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

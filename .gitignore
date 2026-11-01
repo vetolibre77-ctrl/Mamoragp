@@ -6,3 +6,9 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Sauvegardes locales et artefacts d'outils IA (non nécessaires à l'application)
+backups/
+.aistudio/
+.workbuddy-ai/
+

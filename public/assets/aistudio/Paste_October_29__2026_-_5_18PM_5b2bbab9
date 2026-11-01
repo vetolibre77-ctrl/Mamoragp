@@ -1,0 +1,638 @@
+# PROJET : MAMORA GP
+## Application professionnelle de gestion de production industrielle de conserves de thon et de sardines
+
+### 1. RÔLE ET MISSION
+
+Agis comme une équipe complète composée de :
+- Un architecte logiciel spécialisé dans les applications industrielles.
+- Un ingénieur en génie industriel et gestion de production.
+- Un spécialiste HACCP, hygiène alimentaire et traçabilité.
+- Un responsable qualité connaissant les principes ISO 22000.
+- Un expert en bases de données, cybersécurité et applications Windows multi-utilisateurs.
+- Un UX/UI designer spécialisé dans les logiciels ERP industriels.
+
+Ta mission est de concevoir et développer une application professionnelle nommée **MAMORA GP**, destinée à une usine de fabrication de conserves de thon et de sardines.
+
+L'application doit permettre de planifier, exécuter, contrôler, tracer et analyser toutes les opérations de production, depuis la réception des matières premières jusqu'à la libération des produits finis.
+
+Le résultat doit être une application fonctionnelle, moderne, sécurisée, évolutive et installable sous Windows, utilisée simultanément par plusieurs utilisateurs sur un réseau local.
+
+### 2. ENVIRONNEMENT TECHNIQUE ET ARCHITECTURE
+
+Avant de commencer le développement :
+
+1. Présente l'architecture technique recommandée.
+2. Distingue l'application web de son éventuel emballage en logiciel Windows.
+3. Identifie les composants nécessaires au fonctionnement multi-utilisateur.
+4. Explique comment déployer l'application sur un PC serveur et les postes clients.
+5. Ne prétends pas qu'une application exécutée dans Google AI Studio est déjà un logiciel Windows installé.
+
+Objectif de déploiement :
+- Système d'exploitation : Windows 10/11 selon compatibilité vérifiée.
+- Réseau : réseau local Ethernet, avec plusieurs postes clients.
+- Serveur : un PC dédié hébergeant les services applicatifs et la base de données.
+- Clients : plusieurs ordinateurs utilisant l'application simultanément.
+- Interface : en français, avec architecture permettant d'ajouter l'arabe ultérieurement.
+- Fonctionnement : sur le réseau local, sans dépendance obligatoire à Internet pour les fonctions quotidiennes.
+- Sauvegardes : automatiques, planifiées et vérifiables.
+
+Choisis une architecture adaptée après avoir vérifié les possibilités de l'environnement de développement.
+
+Privilégie une architecture client-serveur avec une API sécurisée et une base de données centrale adaptée à l'utilisation concurrente. Ne partage pas directement un fichier de base de données SQLite entre plusieurs PC sur un dossier réseau. Si SQLite est utilisé pour un mode monoposte ou un prototype, précise ses limites et prévois une migration appropriée pour le fonctionnement multi-utilisateur.
+
+Ne suppose pas qu'une technologie est déjà présente. Justifie les choix techniques avant de les mettre en œuvre.
+
+### 3. INTERFACE UTILISATEUR
+
+Créer une interface moderne, professionnelle et adaptée à une usine agroalimentaire.
+
+Style graphique :
+- Design industriel contemporain.
+- Menu latéral organisé par catégories.
+- Menu latéral rétractable grâce à une flèche et réaffichable avec cette même flèche.
+- Tableau de bord avec indicateurs visuels.
+- Icônes homogènes et lisibles.
+- Tableaux avec recherche, filtres, tri et pagination.
+- Formulaires ergonomiques avec validation des données.
+- Fenêtres de confirmation pour les opérations sensibles.
+- Affichage clair des lots, dates, quantités et statuts.
+- Notifications de succès, avertissement et erreur.
+- Impression de documents professionnels et export PDF/Excel.
+- Interface responsive, notamment pour les écrans d'ordinateurs industriels.
+
+Prévoir des statuts visuellement distincts :
+- Brouillon.
+- Planifié.
+- En cours.
+- En attente de contrôle.
+- Bloqué.
+- Non conforme.
+- En attente de libération.
+- Validé.
+- Clôturé.
+- Annulé.
+
+Les couleurs ne doivent jamais constituer le seul moyen d'identifier un statut.
+
+### 4. TABLEAU DE BORD DE PRODUCTION
+
+Créer un tableau de bord central affichant :
+
+- Production prévue et production réalisée.
+- Production journalière, hebdomadaire et mensuelle.
+- Quantités produites par type de poisson.
+- Quantités par référence et format de boîte.
+- Rendement matière.
+- Pertes et rebuts.
+- Lots en cours de fabrication.
+- Lots bloqués ou en attente de contrôle.
+- Non-conformités ouvertes.
+- Matières premières disponibles et insuffisantes.
+- Ordres de fabrication en retard.
+- État des lignes de production.
+- Indicateurs de performance et d'occupation des lignes.
+- Alertes relatives aux contrôles et opérations en retard.
+
+Tous les indicateurs doivent être calculés à partir des données réelles enregistrées dans la base de données. Ne pas utiliser de fausses données en production.
+
+### 5. GESTION DES RÉFÉRENTIELS
+
+Créer des modules pour gérer :
+
+**Produits finis**
+- Thon au naturel.
+- Thon à l'huile.
+- Thon à la sauce tomate.
+- Sardines à l'huile.
+- Sardines à la tomate.
+- Autres recettes configurables.
+
+**Références et conditionnements**
+- Code produit.
+- Désignation.
+- Format de boîte.
+- Poids net.
+- Poids égoutté, si applicable.
+- Recette associée.
+- Nombre de boîtes par carton.
+- Nombre de cartons par palette.
+- Durée de conservation validée.
+- Conditions de stockage.
+- Version de la fiche technique.
+
+**Autres référentiels**
+- Matières premières.
+- Ingrédients et huiles.
+- Emballages primaires et secondaires.
+- Fournisseurs.
+- Entrepôts et emplacements.
+- Lignes de production.
+- Machines et équipements.
+- Opérateurs et équipes.
+- Recettes et nomenclatures.
+- Paramètres de production.
+- Motifs d'arrêt, de perte et de rebut.
+
+Les unités de mesure doivent être configurables : kg, g, litre, unité, boîte, carton, palette et autres unités nécessaires. Gérer correctement les conversions, les décimales et les séparateurs décimaux français.
+
+### 6. RÉCEPTION ET TRAÇABILITÉ DES MATIÈRES PREMIÈRES
+
+Créer un module de réception avec :
+
+- Numéro de réception.
+- Fournisseur.
+- Date et heure de réception.
+- Type de matière première.
+- Numéro de lot fournisseur.
+- Quantité commandée, reçue et acceptée.
+- Quantité refusée ou mise en attente.
+- Température à réception, lorsqu'elle est applicable.
+- État du véhicule et des emballages.
+- Documents d'accompagnement.
+- Résultats des contrôles.
+- Opérateur responsable.
+- Emplacement de stockage.
+- Décision du contrôle qualité.
+
+Chaque lot reçoit un identifiant interne unique et conserve son lien avec le lot fournisseur.
+
+Prévoir les statuts : réception en cours, réception complète, réception partielle, réception avec manquants, en attente de contrôle, accepté, accepté sous dérogation autorisée et refusé.
+
+Une matière première non libérée ne doit pas pouvoir être consommée dans une production normale, sauf procédure de dérogation explicitement autorisée et tracée.
+
+### 7. PLANIFICATION ET ORDRES DE FABRICATION
+
+Créer un module complet de planification :
+
+- Numéro unique d'ordre de fabrication.
+- Produit et recette.
+- Quantité prévue.
+- Ligne de production.
+- Date et heure de début prévues.
+- Date et heure de fin prévues.
+- Équipe responsable.
+- Disponibilité des matières premières.
+- Disponibilité des emballages.
+- Priorité de production.
+- Statut de l'ordre.
+- Responsable de validation.
+
+Avant de lancer un ordre, vérifier :
+- La disponibilité des matières premières.
+- La disponibilité des emballages.
+- La version applicable de la recette.
+- La disponibilité de la ligne.
+- Les éventuels blocages qualité.
+- Les compétences ou autorisations nécessaires.
+
+Afficher les manques et les incompatibilités sans inventer de disponibilité.
+
+### 8. GESTION DES RECETTES ET NOMENCLATURES
+
+Permettre de définir des recettes versionnées pour chaque produit.
+
+Chaque recette comprend :
+- Les ingrédients.
+- Les quantités théoriques.
+- Les tolérances autorisées.
+- Les unités.
+- Les étapes de préparation.
+- Les paramètres de procédé applicables.
+- Les contrôles à effectuer.
+- Les critères d'acceptation.
+- Les versions et dates d'application.
+- Les approbations nécessaires.
+
+Calculer automatiquement les besoins théoriques selon la quantité planifiée.
+
+Conserver la recette réellement utilisée pour chaque lot. Toute modification de recette doit être historisée et approuvée selon les droits définis.
+
+Ne pas imposer de valeurs techniques universelles pour la stérilisation, les températures, les temps de cuisson ou les paramètres critiques. Ces valeurs doivent provenir des procédures validées par les responsables compétents.
+
+### 9. SUIVI DE FABRICATION DU THON ET DES SARDINES
+
+Créer un suivi par étapes, configurable selon le produit et le procédé réellement utilisé.
+
+Exemples d'étapes :
+1. Préparation de la matière première.
+2. Décongélation, si applicable.
+3. Lavage et préparation.
+4. Étêtage, éviscération ou découpe, selon le produit.
+5. Cuisson ou précuisson, si applicable.
+6. Refroidissement contrôlé, si applicable.
+7. Nettoyage et préparation des boîtes.
+8. Remplissage.
+9. Dosage de l'huile, de la sauce ou du liquide de couverture.
+10. Sertissage.
+11. Traitement thermique programmé et validé.
+12. Refroidissement après traitement.
+13. Séchage et contrôle des boîtes.
+14. Étiquetage et codification.
+15. Mise en cartons.
+16. Palettisation.
+17. Transfert vers le stock des produits finis.
+
+Ces étapes ne sont pas toutes obligatoires pour chaque produit. Les responsables doivent pouvoir configurer les opérations et leur ordre selon le procédé validé.
+
+Pour chaque étape, enregistrer :
+- Ordre de fabrication et lot concerné.
+- Date et heure de début et de fin.
+- Quantités entrantes et sortantes.
+- Opérateur.
+- Ligne ou équipement.
+- Paramètres mesurés.
+- Pertes et rebuts.
+- Arrêts et incidents.
+- Contrôles réalisés.
+- Commentaires et pièces jointes.
+- Validation et historique des modifications.
+
+Les quantités consommées et produites doivent être rapprochées automatiquement, avec signalement des écarts.
+
+### 10. MODULE HACCP ET CONTRÔLES QUALITÉ
+
+Créer un module HACCP dédié permettant de gérer :
+
+- Études HACCP par produit ou famille de produits.
+- Diagrammes de fabrication.
+- Dangers biologiques, chimiques et physiques.
+- Mesures préventives et mesures de maîtrise.
+- Analyse et évaluation des dangers.
+- Détermination et justification des CCP et des PRPo.
+- Limites critiques validées, lorsqu'elles s'appliquent.
+- Limites opérationnelles et critères d'acceptation.
+- Méthodes de surveillance.
+- Fréquences de contrôle.
+- Responsables désignés.
+- Actions en cas de dérive.
+- Vérification de l'efficacité des mesures.
+- Validation des procédures.
+- Historique des révisions.
+
+Pour chaque contrôle :
+- Identifiant du contrôle.
+- Lot, ordre de fabrication et étape.
+- Date et heure.
+- Valeur mesurée et unité.
+- Limites applicables et version de référence.
+- Résultat conforme ou non conforme.
+- Nom de l'opérateur.
+- Approbation du responsable, si nécessaire.
+- Action immédiate et décision sur le lot.
+
+Les valeurs critiques et les fréquences de contrôle doivent être définies et approuvées par l'équipe HACCP de l'usine.
+
+Prévoir notamment les contrôles applicables à la réception, aux matières premières, à la cuisson, au remplissage, au sertissage, au traitement thermique, au refroidissement et au produit fini.
+
+Pour les conserves appertisées, le traitement thermique doit être associé à un barème validé par une personne compétente pour le produit, le conditionnement et l'équipement concernés. L'application ne doit jamais générer elle-même un barème universel ni déclarer un lot sûr sur la seule base d'un calcul informatique.
+
+En cas de dépassement d'une limite critique :
+- Déclencher une alerte immédiate.
+- Bloquer le lot concerné selon les règles validées.
+- Empêcher sa libération normale.
+- Enregistrer les faits, l'heure et les valeurs.
+- Ouvrir une fiche de non-conformité.
+- Exiger une décision autorisée.
+- Conserver toutes les preuves et approbations.
+
+### 11. SUIVI DU SERTISSAGE ET DU TRAITEMENT THERMIQUE
+
+Créer des fiches de suivi spécifiques pour les opérations sensibles.
+
+**Sertissage**
+- Ligne et sertisseuse.
+- Référence de boîte et de couvercle.
+- Lot de fabrication.
+- Contrôles visuels.
+- Mesures de sertissage selon la méthode approuvée.
+- Résultats des examens et essais applicables.
+- Fréquence de contrôle définie par la procédure.
+- Identification du contrôleur.
+- Anomalies, actions et décision.
+
+**Traitement thermique**
+- Autoclave ou équipement concerné.
+- Identifiant du cycle.
+- Lot(s) chargé(s).
+- Date et heure.
+- Programme ou barème validé et sa version.
+- Enregistrements réels du cycle.
+- Courbes et documents associés, lorsqu'ils sont disponibles.
+- Identification de l'opérateur.
+- Contrôle et décision du responsable habilité.
+- Statut du lot après examen du dossier.
+
+Ne pas déclarer automatiquement conforme un cycle incomplet, une donnée manquante ou un résultat hors limites. Prévoir une mise en attente et une évaluation par un responsable autorisé.
+
+### 12. NON-CONFORMITÉS ET ACTIONS CORRECTIVES
+
+Créer un système complet de gestion des non-conformités :
+
+- Numéro de fiche.
+- Type et niveau de gravité.
+- Date et origine.
+- Lot et produit concernés.
+- Description du problème.
+- Valeurs et preuves.
+- Quantités concernées.
+- Mise en quarantaine.
+- Analyse de la cause.
+- Action immédiate.
+- Action corrective et préventive.
+- Responsable et échéance.
+- Vérification d'efficacité.
+- Approbation de clôture.
+
+Les lots concernés doivent rester bloqués tant que la décision de traitement n'est pas enregistrée par une personne habilitée.
+
+### 13. TRAÇABILITÉ COMPLÈTE ET RAPPEL DE PRODUITS
+
+La traçabilité est une fonction centrale de MAMORA GP.
+
+Chaque lot de produit fini doit pouvoir être relié :
+- Aux lots de poissons utilisés.
+- Aux lots d'ingrédients et d'huile.
+- Aux lots de boîtes, couvercles et emballages.
+- Aux ordres de fabrication.
+- Aux recettes et versions appliquées.
+- Aux lignes, machines et équipements.
+- Aux équipes et opérateurs.
+- Aux contrôles qualité.
+- Aux cycles thermiques.
+- Aux non-conformités.
+- Aux quantités produites, rejetées et libérées.
+- Aux emplacements de stockage.
+- Aux expéditions, si le module est activé.
+
+Créer une recherche de traçabilité ascendante et descendante :
+- Partir d'un lot fournisseur pour identifier tous les produits concernés.
+- Partir d'un lot fini pour retrouver tous ses composants et opérations.
+- Partir d'un défaut qualité pour identifier les lots potentiellement concernés.
+
+Prévoir un mode simulation de rappel permettant de générer un rapport horodaté avec les quantités produites, en stock, expédiées et restant à localiser, selon les données disponibles.
+
+### 14. GESTION DES STOCKS DE PRODUCTION
+
+Créer un module de stock intégré pour :
+- Matières premières.
+- Ingrédients.
+- Huiles et sauces.
+- Boîtes et couvercles.
+- Cartons et étiquettes.
+- Produits semi-finis.
+- Produits finis.
+- Rebuts et produits bloqués.
+
+Fonctions :
+- Entrées et sorties.
+- Consommation par ordre de fabrication.
+- Retours de matières.
+- Transferts entre emplacements.
+- Inventaires et ajustements autorisés.
+- Gestion des lots et dates pertinentes.
+- Unités et conversions de conditionnement.
+- Alertes de stock minimum.
+- Méthodes de rotation FIFO ou FEFO selon les règles retenues.
+- Blocage des lots non conformes.
+- Historique des mouvements.
+
+Le stock disponible doit distinguer clairement les quantités utilisables, en quarantaine, réservées, bloquées et rejetées.
+
+### 15. PRODUITS FINIS ET LIBÉRATION DES LOTS
+
+Après fabrication, créer un dossier de lot contenant :
+- Référence du produit.
+- Numéro de lot fini.
+- Date de fabrication.
+- Date de durabilité validée.
+- Quantité fabriquée.
+- Quantité conforme.
+- Quantité rejetée.
+- Nombre de boîtes, cartons et palettes.
+- Résultats des contrôles.
+- Documents associés.
+- État du dossier de fabrication.
+
+Un produit fini ne peut être déclaré libéré que si les contrôles et documents requis sont complets et si la décision est enregistrée par une personne habilitée.
+
+Les statuts doivent distinguer clairement : en attente, bloqué, libéré et rejeté.
+
+### 16. MAINTENANCE ET DISPONIBILITÉ DES ÉQUIPEMENTS
+
+Créer un module de maintenance préventive et corrective comprenant :
+- Fiche équipement.
+- Identifiant et localisation.
+- Plan de maintenance.
+- Calendrier des interventions.
+- Pannes et arrêts.
+- Historique des réparations.
+- Pièces de rechange.
+- Responsable.
+- Documents techniques.
+- Contrôles après intervention.
+
+Permettre de signaler qu'un équipement est indisponible ou qu'une intervention est nécessaire avant la reprise de production.
+
+Les opérations de maintenance susceptibles d'affecter la sécurité alimentaire doivent suivre une procédure de remise en service validée.
+
+### 17. GESTION DES UTILISATEURS ET DES AUTORISATIONS
+
+Créer une gestion des accès par rôles et permissions détaillées.
+
+Rôles initiaux configurables :
+- Administrateur système.
+- Directeur de production.
+- Responsable de production.
+- Chef de ligne.
+- Opérateur.
+- Responsable qualité.
+- Technicien de laboratoire.
+- Responsable maintenance.
+- Magasinier.
+- Auditeur en lecture seule.
+
+Pour chaque module et chaque action, permettre d'autoriser ou d'interdire :
+- Consulter.
+- Créer.
+- Modifier.
+- Valider.
+- Rejeter.
+- Clôturer.
+- Supprimer, lorsque cela est permis.
+- Imprimer.
+- Exporter.
+- Débloquer un lot.
+- Libérer un produit fini.
+- Gérer les utilisateurs.
+
+Exigences :
+- Connexion individuelle.
+- Mots de passe protégés par hachage adapté.
+- Sessions sécurisées.
+- Déconnexion automatique configurable.
+- Historique des connexions.
+- Journal d'audit des opérations sensibles.
+- Principe du moindre privilège.
+- Protection contre les accès non autorisés.
+
+Un utilisateur ne doit pas pouvoir s'accorder lui-même des droits supplémentaires sans autorisation appropriée.
+
+### 18. JOURNAL D'AUDIT ET INTÉGRITÉ DES DONNÉES
+
+Toute opération critique doit être historisée :
+- Création et modification.
+- Ancienne et nouvelle valeur, lorsque pertinent.
+- Utilisateur.
+- Date et heure du serveur.
+- Motif de modification si nécessaire.
+- Approbation.
+- Action réalisée.
+
+Ne pas permettre la suppression silencieuse de données de production, de contrôles HACCP ou d'approbations. Prévoir des annulations et corrections tracées.
+
+Les enregistrements validés doivent être protégés contre les modifications non autorisées. Toute correction doit préserver l'historique.
+
+### 19. RAPPORTS ET ANALYSES
+
+Créer des rapports professionnels :
+- Production par jour, équipe, ligne et produit.
+- Quantités théoriques et réelles.
+- Rendement matière.
+- Consommation des ingrédients.
+- Pertes, déchets et rebuts.
+- Temps d'arrêt.
+- Productivité des lignes.
+- Non-conformités et actions correctives.
+- Résultats HACCP.
+- Suivi des contrôles de sertissage.
+- Suivi des cycles thermiques.
+- État des lots bloqués.
+- Traçabilité et simulation de rappel.
+- État des stocks.
+- Historique des validations.
+
+Filtres par période, lot, produit, ligne, équipe et statut.
+
+Prévoir l'impression et l'export en PDF et Excel selon les permissions. Tous les rapports doivent provenir de données enregistrées et afficher leur période, leur date de génération et les filtres utilisés.
+
+### 20. SAUVEGARDE ET CONTINUITÉ
+
+Créer un système de sauvegarde comprenant :
+- Sauvegarde automatique planifiée.
+- Sauvegarde avant les mises à jour importantes.
+- Destination configurable.
+- Copie sur un support distinct ou un emplacement de sauvegarde dédié.
+- Historique des sauvegardes.
+- Journal des erreurs.
+- Vérification de l'intégrité des sauvegardes.
+- Procédure de restauration documentée.
+- Tests périodiques de restauration.
+
+La sauvegarde ne doit pas simplement copier une base active de manière incohérente. Utiliser les mécanismes adaptés au moteur de base de données.
+
+Prévoir la gestion des interruptions réseau et une procédure de reprise après panne. Ne jamais confirmer qu'une sauvegarde a réussi si le résultat n'a pas été vérifié.
+
+### 21. SÉCURITÉ ET FONCTIONNEMENT MULTI-UTILISATEUR
+
+L'application doit supporter plusieurs utilisateurs travaillant simultanément.
+
+Exigences :
+- Base de données centrale sur le serveur.
+- Contrôle des permissions côté serveur.
+- Transactions cohérentes.
+- Gestion des accès concurrents.
+- Identifiants uniques.
+- Prévention des doubles validations.
+- Contrôle des conflits de modification.
+- Journalisation des erreurs.
+- Communication sécurisée sur le réseau local.
+- Pare-feu Windows configuré pour n'autoriser que les connexions nécessaires.
+- Aucun accès direct des postes clients au fichier interne de la base de données.
+- Mécanisme de migration de base de données versionné.
+- Tests de charge avec plusieurs utilisateurs.
+
+Si le serveur est indisponible, afficher un message explicite et ne pas simuler la réussite des opérations. Toute opération interrompue doit pouvoir être vérifiée avant d'être relancée.
+
+### 22. EXIGENCES RÉGLEMENTAIRES ET QUALITÉ
+
+Concevoir le système en tenant compte des principes HACCP et des exigences pertinentes d'ISO 22000, ainsi que des exigences réglementaires applicables à l'Algérie et aux marchés de destination.
+
+Ne pas affirmer que le logiciel est certifié HACCP ou ISO 22000. L'application est un outil d'aide au système de management de la sécurité des denrées alimentaires. La conformité réelle dépend des procédures validées, de leur mise en œuvre, de la compétence des équipes et des obligations applicables.
+
+Prévoir la validation humaine des plans HACCP, des barèmes thermiques, des limites critiques, des fréquences de surveillance, des procédures de libération et des actions correctives.
+
+### 23. LIVRABLES ATTENDUS
+
+Développer progressivement les éléments suivants :
+
+1. Architecture détaillée.
+2. Maquettes modernes des écrans.
+3. Modèle de données et relations entre les entités.
+4. Authentification et gestion des permissions.
+5. Référentiels et gestion des stocks.
+6. Réception et traçabilité des matières premières.
+7. Planification et ordres de fabrication.
+8. Suivi de production par étapes.
+9. Modules HACCP et qualité.
+10. Gestion des non-conformités.
+11. Traçabilité et rappel de produits.
+12. Produits finis et libération des lots.
+13. Maintenance.
+14. Rapports et tableaux de bord.
+15. Sauvegarde et restauration.
+16. Tests automatisés et tests métier.
+17. Documentation d'installation.
+18. Procédure de déploiement serveur et postes clients.
+19. Procédure de mise à jour.
+20. Préparation du package Windows installable.
+
+Ne génère pas uniquement une maquette graphique. Implémente progressivement les fonctions, la base de données, les validations, les permissions et les tests.
+
+### 24. MÉTHODE DE DÉVELOPPEMENT OBLIGATOIRE
+
+Travaille par phases.
+
+**Phase 1 — Analyse et conception**
+Présente l'architecture, les modules, le schéma de données, les rôles et les flux de fabrication. Identifie les décisions métier qui doivent être validées par l'usine.
+
+**Phase 2 — Socle technique**
+Met en place la base de données, l'authentification, les permissions, le journal d'audit et la structure de l'application.
+
+**Phase 3 — Production**
+Développe les référentiels, les stocks, les réceptions, la planification et le suivi de fabrication.
+
+**Phase 4 — Qualité et HACCP**
+Développe les contrôles, les alertes, les non-conformités, les blocages, les approbations et la traçabilité.
+
+**Phase 5 — Rapports et administration**
+Développe les indicateurs, les exports, les sauvegardes et les paramètres.
+
+**Phase 6 — Tests et déploiement**
+Teste les scénarios réels, les droits, les accès concurrents, les interruptions réseau, les sauvegardes, les restaurations et l'installation Windows.
+
+À la fin de chaque phase :
+- Fournis la liste des fonctions terminées.
+- Indique les fichiers créés ou modifiés.
+- Exécute les tests pertinents.
+- Signale les erreurs et les limites restantes.
+- Fournis les instructions pour continuer.
+
+Ne prétends jamais qu'une fonction est terminée si elle n'est pas implémentée et testée.
+
+### 25. PREMIÈRE ACTION À EFFECTUER
+
+Commence par proposer une architecture professionnelle pour MAMORA GP et une feuille de route technique adaptée à Google AI Studio.
+
+Explique comment passer du prototype généré à une application réellement opérationnelle sur un réseau local Windows avec un serveur central et plusieurs utilisateurs.
+
+Présente d'abord :
+- Le schéma d'architecture.
+- La technologie recommandée et sa justification.
+- Le modèle initial de base de données.
+- La liste des écrans principaux.
+- Les rôles et autorisations.
+- Le plan de réalisation par phases.
+
+Attends la validation de cette architecture avant d'engager les choix techniques irréversibles.
+
+L'objectif final est un logiciel industriel fiable, maintenable, sécurisé, traçable et réellement utilisable dans une conserverie de thon et de sardines.
